@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="ryngrn/droboctl"
-VERSION="${DROBO_VERSION:-v0.1.0-rc2}"
+VERSION="${DROBO_VERSION:-v0.1.0-rc3}"
 DEST="/usr/local/bin/drobo"
 RULE="/etc/udev/rules.d/99-droboctl.rules"
 TMP="$(mktemp -d)"
@@ -19,14 +19,21 @@ chmod +x "$TMP/drobo"
 sudo install -m 0755 "$TMP/drobo" "$DEST"
 
 if command -v udevadm >/dev/null 2>&1; then
+  if ! getent group drobo >/dev/null 2>&1; then
+    sudo groupadd --system drobo
+  fi
+  target_user="${SUDO_USER:-${USER:-}}"
+  if [[ -n "$target_user" && "$target_user" != "root" ]]; then
+    sudo usermod -aG drobo "$target_user"
+  fi
   cat <<'EOF' | sudo tee "$RULE" >/dev/null
-SUBSYSTEM=="scsi_generic", ATTRS{vendor}=="Drobo*", TAG+="uaccess", MODE="0660"
-SUBSYSTEM=="scsi_generic", ENV{ID_VENDOR_ID}=="19b9", TAG+="uaccess", MODE="0660"
+SUBSYSTEM=="scsi_generic", ATTRS{vendor}=="Drobo*", GROUP="drobo", MODE="0660"
+SUBSYSTEM=="scsi_generic", ENV{ID_VENDOR_ID}=="19b9", GROUP="drobo", MODE="0660"
 EOF
   sudo udevadm control --reload-rules
   sudo udevadm trigger --subsystem-match=scsi_generic || true
 fi
 
 echo "Installed drobo $VERSION to $DEST"
-echo "Try: drobo status"
-echo "If device permissions have not refreshed yet, unplug/replug the Drobo once."
+echo "Drobo device access is granted through the 'drobo' group."
+echo "Log out and back in once, then run: drobo status"
