@@ -2,8 +2,9 @@
 set -euo pipefail
 
 REPO="ryngrn/droboctl"
-VERSION="${DROBO_VERSION:-v0.0.2-dev}"
+VERSION="${DROBO_VERSION:-v0.0.3-dev}"
 DEST="/usr/local/bin/drobo"
+RULE="/etc/udev/rules.d/99-droboctl.rules"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -17,5 +18,13 @@ curl -fL "$url" -o "$TMP/drobo"
 chmod +x "$TMP/drobo"
 sudo install -m 0755 "$TMP/drobo" "$DEST"
 
+if command -v udevadm >/dev/null 2>&1; then
+  printf '%s
+' 'SUBSYSTEM=="scsi_generic", ATTRS{idVendor}=="19b9", TAG+="uaccess", MODE="0660"' | sudo tee "$RULE" >/dev/null
+  sudo udevadm control --reload-rules
+  sudo udevadm trigger --subsystem-match=scsi_generic || true
+fi
+
 echo "Installed drobo $VERSION to $DEST"
-echo "Run: sudo drobo status"
+echo "Try: drobo status"
+echo "If device permissions have not refreshed yet, unplug/replug the Drobo once."

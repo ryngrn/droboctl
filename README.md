@@ -36,7 +36,15 @@ The management path is read-only in v1. Destructive commands are intentionally o
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ryngrn/droboctl/main/install.sh | bash
-sudo drobo status
+drobo status
+```
+
+The installer also adds a narrow udev rule for Drobo SCSI-generic devices so normal status reads can run without `sudo`. If permissions do not refresh immediately, unplug/replug the Drobo once.
+
+For a focused health diagnostic:
+
+```bash
+drobo doctor
 ```
 
 The installer uses the current development release while v0 is being validated on real hardware.

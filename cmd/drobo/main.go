@@ -22,6 +22,11 @@ func main() {
 			fmt.Fprintln(os.Stderr, "drobo:", err)
 			os.Exit(1)
 		}
+	case "doctor":
+		if err := doctor(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "drobo:", err)
+			os.Exit(1)
+		}
 	case "version":
 		fmt.Println("droboctl dev")
 	default:
@@ -31,7 +36,9 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "Usage: drobo status [--device /dev/sgX]")
+	fmt.Fprintln(os.Stderr, "Usage:")
+	fmt.Fprintln(os.Stderr, "  drobo status [--device /dev/sgX]")
+	fmt.Fprintln(os.Stderr, "  drobo doctor [--device /dev/sgX]")
 }
 
 func status(args []string) error {
