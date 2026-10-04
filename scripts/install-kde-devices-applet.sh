@@ -3,7 +3,8 @@ set -euo pipefail
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 action=${1:-install}
 source_pkg="$root/plasma/org.kmac.devicenotifier"
-target="$HOME/.local/share/plasma/plasmoids/org.kmac.devicenotifier"
+target="$HOME/.local/share/plasma/plasmoids/org.kde.plasma.devicenotifier"
+legacy_target="$HOME/.local/share/plasma/plasmoids/org.kmac.devicenotifier"
 cfg="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
 state="$HOME/.local/state/droboctl"
 mkdir -p "$state"
@@ -32,11 +33,20 @@ case "$action" in
     mkdir -p "$(dirname -- "$target")"
     if [[ -d "$target" ]]; then mv "$target" "$target.backup-$(date +%Y%m%d%H%M%S)"; fi
     cp -a "$source_pkg" "$target"
-    rewrite_tray org.kde.plasma.devicenotifier org.kmac.devicenotifier
+    python3 - "$target/metadata.json" <<'PYMETA'
+from pathlib import Path
+import sys
+p=Path(sys.argv[1])
+s=p.read_text().replace('"Id": "org.kmac.devicenotifier"', '"Id": "org.kde.plasma.devicenotifier"')
+p.write_text(s)
+PYMETA
+    if [[ -d "$legacy_target" ]]; then mv "$legacy_target" "$legacy_target.disabled-$(date +%Y%m%d%H%M%S)"; fi
+    rewrite_tray org.kmac.devicenotifier org.kde.plasma.devicenotifier
     ;;
   uninstall)
     rewrite_tray org.kmac.devicenotifier org.kde.plasma.devicenotifier
     if [[ -d "$target" ]]; then mv "$target" "$target.disabled-$(date +%Y%m%d%H%M%S)"; fi
+    if [[ -d "$legacy_target" ]]; then mv "$legacy_target" "$legacy_target.disabled-$(date +%Y%m%d%H%M%S)"; fi
     ;;
   *) echo "Usage: $0 [install|uninstall]" >&2; exit 2 ;;
 esac
