@@ -1,0 +1,15 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Id": "org.kmac.devicenotifier",
+    "Name": "Disks & Devices",
+    "Description": "Devices with Drobo-aware capacity",
+    "Category": "System Information",
+    "Icon": "device-notifier",
+    "License": "MIT",
+    "EnabledByDefault": true,
+    "FormFactors": ["desktop"]
+  },
+  "X-Plasma-API-Minimum-Version": "6.0",
+  "X-Plasma-NotificationAreaCategory": "Hardware"
+}
