@@ -32,6 +32,15 @@ Early development. Verified against a real Drobo 5D on Linux:
 
 The management path is read-only in v1. Destructive commands are intentionally out of scope.
 
+## Quick install (Linux x86-64)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ryngrn/droboctl/main/install.sh | bash
+sudo drobo status
+```
+
+The installer uses the current development release while v0 is being validated on real hardware.
+
 ## Building
 
 Requires Go.
