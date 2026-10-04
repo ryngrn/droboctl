@@ -47,7 +47,15 @@ For a focused health diagnostic:
 drobo doctor
 ```
 
-The installer uses the current development release while v0 is being validated on real hardware.
+To mount a detected HFS+ Drobo volume safely:
+
+```bash
+drobo mount
+```
+
+The mount command is intentionally read-only. `drobo status` also reports whether the data volume is currently mounted.
+
+The installer uses the current release candidate while v0.1 is being validated on real hardware.
 
 ## Building
 

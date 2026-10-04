@@ -27,6 +27,11 @@ func main() {
 			fmt.Fprintln(os.Stderr, "drobo:", err)
 			os.Exit(1)
 		}
+	case "mount":
+		if err := mountCmd(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "drobo:", err)
+			os.Exit(1)
+		}
 	case "version":
 		fmt.Println("droboctl dev")
 	default:
@@ -39,6 +44,7 @@ func usage() {
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "  drobo status [--device /dev/sgX]")
 	fmt.Fprintln(os.Stderr, "  drobo doctor [--device /dev/sgX]")
+	fmt.Fprintln(os.Stderr, "  drobo mount [--device /dev/sgX] [--mountpoint /mnt/drobo]")
 }
 
 func status(args []string) error {
@@ -100,6 +106,13 @@ func status(args []string) error {
 	fmt.Printf("Free:     %s\n", human(capacity.FreeProtected))
 	if d.Block != "" {
 		fmt.Printf("Volume:   %s\n", d.Block)
+		if part, fsType, label, ferr := findDataPartition(d.Block); ferr == nil {
+			if mp, ok := mountedAt(part); ok {
+				fmt.Printf("Mount:    %s (%s, %s)\n", mp, fsType, label)
+			} else {
+				fmt.Printf("Mount:    not mounted (%s, %s on %s)\n", fsType, label, part)
+			}
+		}
 	}
 	if st.RelayoutCount > 0 {
 		fmt.Printf("Relayout: %d in progress\n", st.RelayoutCount)
