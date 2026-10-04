@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="ryngrn/droboctl"
-VERSION="${DROBO_VERSION:-v0.0.3-dev}"
+VERSION="${DROBO_VERSION:-v0.1.0-rc1}"
 DEST="/usr/local/bin/drobo"
 RULE="/etc/udev/rules.d/99-droboctl.rules"
 TMP="$(mktemp -d)"
