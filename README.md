@@ -99,3 +99,11 @@ sudo udevadm trigger --subsystem-match=block
 ```
 
 The rule is deliberately restricted to USB VID:PID `19b9:3444`, filesystem label `Drobo`, and filesystem partitions. Plasma's `AutomountUnknownDevices` remains disabled; the known Drobo is forced to automount on attach through `kded_device_automounterrc`.
+
+### Capacity shown by KDE
+
+The Drobo 5D presents a thin-provisioned HFS+ volume whose virtual filesystem size is about **16 TB**. KDE and UDisks report that filesystem geometry, so their generic capacity label can show 16 TB even though the enclosure currently reports **10.93 TB usable** and **8.13 TB free**. droboctl does not falsify the block-device size. Instead, the native **Show Drobo health** device action reports the real pool capacity, free space, bay state, and cache health from the Drobo management channel.
+
+### Stable reconnect behavior
+
+Linux block names such as `/dev/sdd2` and `/dev/sde2` can change after reconnects. The included `drobo-automount.service` watches the stable `/dev/disk/by-label/Drobo` link, verifies Drobo USB VID:PID `19b9:3444`, and asks UDisks to mount the volume when needed. This avoids relying on KDE's per-device object path, while still leaving unknown removable devices alone.

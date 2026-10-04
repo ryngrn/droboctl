@@ -1,0 +1,6 @@
+# Managed by droboctl; only the USB Drobo 5D, never arbitrary removable disks.
+SUBSYSTEM=="block", ENV{ID_BUS}=="usb", ENV{ID_VENDOR_ID}=="19b9", ENV{ID_MODEL_ID}=="3444", ENV{ID_VENDOR}=="Drobo", ENV{ID_MODEL}=="5D", ENV{ID_FS_USAGE}=="filesystem", ENV{ID_PART_ENTRY_TYPE}!="c12a7328-f81f-11d2-ba4b-00a0c93ec93b", ENV{UDISKS_AUTO}="1", ENV{UDISKS_NAME}="Drobo 5D", ENV{UDISKS_ICON_NAME}="drobo", ENV{UDISKS_SYMBOLIC_ICON_NAME}="drobo-symbolic"
+# Keep HFS+ mounts read-only, including subsequent native KDE automounts.
+SUBSYSTEM=="block", ENV{ID_BUS}=="usb", ENV{ID_VENDOR_ID}=="19b9", ENV{ID_MODEL_ID}=="3444", ENV{ID_VENDOR}=="Drobo", ENV{ID_MODEL}=="5D", ENV{ID_FS_TYPE}=="hfsplus", ENV{UDISKS_MOUNT_OPTIONS_DEFAULTS}="ro", ENV{UDISKS_MOUNT_OPTIONS_ALLOW}="ro,nodev,nosuid,noexec,exec,atime,noatime,nodiratime,relatime,strictatime,lazytime,sync,dirsync"
+# Allow read-only droboctl health queries after every reconnect.
+SUBSYSTEM=="scsi_generic", ATTRS{vendor}=="Drobo*", ATTRS{model}=="5D*", GROUP="drobo", MODE="0660"

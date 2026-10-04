@@ -8,6 +8,7 @@ import (
 
 	"github.com/ryngrn/droboctl/internal/device"
 	"github.com/ryngrn/droboctl/internal/esa"
+	"github.com/ryngrn/droboctl/internal/integrate"
 	"github.com/ryngrn/droboctl/internal/scsi"
 )
 
@@ -22,6 +23,11 @@ func main() {
 			fmt.Fprintln(os.Stderr, "drobo:", err)
 			os.Exit(1)
 		}
+	case "integrate":
+		if err := integrate.Command(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "drobo:", err)
+			os.Exit(1)
+		}
 	case "version":
 		fmt.Println("droboctl dev")
 	default:
@@ -31,7 +37,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "Usage: drobo status [--device /dev/sgX]")
+	fmt.Fprintln(os.Stderr, "Usage: drobo status [--device /dev/sgX] | integrate install|status|uninstall [--system]")
 }
 
 func status(args []string) error {

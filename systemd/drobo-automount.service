@@ -1,0 +1,12 @@
+[Unit]
+Description=Auto-mount known Drobo 5D through UDisks
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/git/droboctl/scripts/drobo-automount.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

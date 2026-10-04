@@ -1,3 +1,5 @@
 # droboctl: native UDisks/KDE identity for supported Drobo 5D volumes.
 # Narrowly scoped to Drobo USB VID:PID 19b9:3444 and the Drobo filesystem partition.
 SUBSYSTEM=="block", ENV{ID_VENDOR_ID}=="19b9", ENV{ID_MODEL_ID}=="3444", ENV{ID_FS_USAGE}=="filesystem", ENV{ID_FS_LABEL}=="Drobo", ENV{UDISKS_AUTO}="1", ENV{UDISKS_NAME}="Drobo 5D", ENV{UDISKS_ICON_NAME}="drobo", ENV{UDISKS_SYMBOLIC_ICON_NAME}="drobo-symbolic", ENV{UDISKS_MOUNT_OPTIONS_HFSPLUS_DEFAULTS}="ro"
+# Allow read-only droboctl health queries after every reconnect.
+SUBSYSTEM=="scsi_generic", ATTRS{vendor}=="Drobo*", ATTRS{model}=="5D*", GROUP="drobo", MODE="0660"
