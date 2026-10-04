@@ -95,3 +95,23 @@ Your Drobo is still old storage hardware. Keep backups outside the Drobo.
 ## License
 
 MIT. Not affiliated with Drobo, Inc. or its successors. "Drobo" is used only to identify compatible hardware.
+
+## KDE / UDisks integration
+
+On Plasma, droboctl can integrate a Drobo 5D into the normal removable-storage experience instead of creating a separate dashboard. The integration provides an original five-bay `drobo` icon, enables Plasma's removable-device automounter for the already-known Drobo only, keeps unknown removable devices from being automatically mounted, and supplies UDisks hints so the device is presented as **Drobo 5D**. The supplied udev rule also makes the HFS+ mount explicitly read-only.
+
+Install the user-level portion:
+
+```bash
+./scripts/install-kde-integration.sh
+```
+
+Then install the system UDisks rule once:
+
+```bash
+sudo install -m 0644 integration/99-droboctl.rules /etc/udev/rules.d/99-droboctl.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=block
+```
+
+The rule is deliberately restricted to USB VID:PID `19b9:3444`, filesystem label `Drobo`, and filesystem partitions. Plasma's `AutomountUnknownDevices` remains disabled; the known Drobo is forced to automount on attach through `kded_device_automounterrc`.
