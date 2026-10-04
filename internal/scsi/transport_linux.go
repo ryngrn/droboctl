@@ -40,7 +40,7 @@ type sgIOHdr struct {
 }
 
 func Read(device string, cdb []byte, allocation int) ([]byte, error) {
-	f, err := os.OpenFile(device, os.O_RDWR, 0)
+	f, err := os.OpenFile(device, os.O_RDONLY, 0)
 	if err != nil {
 		return nil, fmt.Errorf("open %s: %w (try sudo)", device, err)
 	}
