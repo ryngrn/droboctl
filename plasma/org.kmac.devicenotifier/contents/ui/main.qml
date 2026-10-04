@@ -14,7 +14,7 @@ PlasmoidItem {
     property string droboFree: "8.13 TB"
     property string droboHealth: ""
 
-    Plasmoid.icon: "device-notifier"
+    Plasmoid.icon: hasDrobo() ? "drobo-symbolic" : "device-notifier"
     Plasmoid.status: visibleDeviceCount() > 0 ? PlasmaCore.Types.ActiveStatus : PlasmaCore.Types.PassiveStatus
     toolTipMainText: "Disks & Devices"
     toolTipSubText: visibleDeviceCount() + " devices available"
@@ -60,6 +60,10 @@ PlasmoidItem {
         let n=0
         for (let i=0;i<hotplug.sources.length;i++) { const u=hotplug.sources[i]; if (includeDevice(u) && category(u)===cat) n++ }
         return n
+    }
+    function hasDrobo() {
+        for (let i=0;i<hotplug.sources.length;i++) if (isDrobo(hotplug.sources[i])) return true
+        return false
     }
     function visibleDeviceCount() {
         let n=0
