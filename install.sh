@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="ryngrn/droboctl"
-VERSION="${DROBO_VERSION:-v0.1.0-rc1}"
+VERSION="${DROBO_VERSION:-v0.1.0-rc2}"
 DEST="/usr/local/bin/drobo"
 RULE="/etc/udev/rules.d/99-droboctl.rules"
 TMP="$(mktemp -d)"
@@ -19,8 +19,10 @@ chmod +x "$TMP/drobo"
 sudo install -m 0755 "$TMP/drobo" "$DEST"
 
 if command -v udevadm >/dev/null 2>&1; then
-  printf '%s
-' 'SUBSYSTEM=="scsi_generic", ATTRS{idVendor}=="19b9", TAG+="uaccess", MODE="0660"' | sudo tee "$RULE" >/dev/null
+  cat <<'EOF' | sudo tee "$RULE" >/dev/null
+SUBSYSTEM=="scsi_generic", ATTRS{vendor}=="Drobo*", TAG+="uaccess", MODE="0660"
+SUBSYSTEM=="scsi_generic", ENV{ID_VENDOR_ID}=="19b9", TAG+="uaccess", MODE="0660"
+EOF
   sudo udevadm control --reload-rules
   sudo udevadm trigger --subsystem-match=scsi_generic || true
 fi

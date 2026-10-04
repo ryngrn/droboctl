@@ -1,1 +1,2 @@
-SUBSYSTEM=="scsi_generic", ATTRS{idVendor}=="19b9", TAG+="uaccess", MODE="0660"
+SUBSYSTEM=="scsi_generic", ATTRS{vendor}=="Drobo*", TAG+="uaccess", MODE="0660"
+SUBSYSTEM=="scsi_generic", ENV{ID_VENDOR_ID}=="19b9", TAG+="uaccess", MODE="0660"
