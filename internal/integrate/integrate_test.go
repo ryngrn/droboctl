@@ -129,20 +129,28 @@ func TestRejectNonDrobo(t *testing.T) {
 func TestRule(t *testing.T) {
 	b, _ := assets.ReadFile("assets/99-droboctl.rules")
 	lines := strings.Split(string(b), "\n")
-	n := 0
+	blockRules := 0
+	scsiRules := 0
 	for _, l := range lines {
-		if !strings.HasPrefix(l, "SUBSYSTEM") {
-			continue
-		}
-		n++
-		for _, match := range []string{`SUBSYSTEM=="block"`, `ENV{ID_BUS}=="usb"`, `ENV{ID_VENDOR_ID}=="19b9"`, `ENV{ID_MODEL_ID}=="3444"`, `ENV{ID_VENDOR}=="Drobo"`, `ENV{ID_MODEL}=="5D"`} {
-			if !strings.Contains(l, match) {
-				t.Fatal("unsafe rule", l)
+		switch {
+		case strings.HasPrefix(l, `SUBSYSTEM=="block"`):
+			blockRules++
+			for _, match := range []string{`ENV{ID_BUS}=="usb"`, `ENV{ID_VENDOR_ID}=="19b9"`, `ENV{ID_MODEL_ID}=="3444"`, `ENV{ID_VENDOR}=="Drobo"`, `ENV{ID_MODEL}=="5D"`} {
+				if !strings.Contains(l, match) {
+					t.Fatal("unsafe block rule", l)
+				}
+			}
+		case strings.HasPrefix(l, `SUBSYSTEM=="scsi_generic"`):
+			scsiRules++
+			for _, match := range []string{`ATTRS{vendor}=="Drobo*"`, `ATTRS{model}=="5D*"`, `GROUP="drobo"`, `MODE="0660"`} {
+				if !strings.Contains(l, match) {
+					t.Fatal("unsafe SCSI rule", l)
+				}
 			}
 		}
 	}
-	if n != 2 {
-		t.Fatal(n)
+	if blockRules != 2 || scsiRules != 1 {
+		t.Fatalf("unexpected rule counts: block=%d scsi=%d", blockRules, scsiRules)
 	}
 	for _, required := range []string{`ENV{UDISKS_AUTO}="1"`, `ENV{UDISKS_NAME}="Drobo 5D"`, `ENV{UDISKS_ICON_NAME}="drobo"`, `ENV{UDISKS_SYMBOLIC_ICON_NAME}="drobo-symbolic"`, `ENV{UDISKS_MOUNT_OPTIONS_DEFAULTS}="ro"`} {
 		if !strings.Contains(string(b), required) {
