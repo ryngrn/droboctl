@@ -43,7 +43,7 @@ func main() {
 func usage() {
 	fmt.Fprintln(os.Stderr, "Usage:")
 	fmt.Fprintln(os.Stderr, "  drobo status [--device /dev/sgX]")
-	fmt.Fprintln(os.Stderr, "  drobo doctor [--device /dev/sgX]")
+	fmt.Fprintln(os.Stderr, "  drobo doctor [--device /dev/sgX] [--show-serials]")
 	fmt.Fprintln(os.Stderr, "  drobo mount [--device /dev/sgX] [--mountpoint /mnt/drobo]")
 }
 
