@@ -57,8 +57,6 @@ drobo mount
 
 The mount command is intentionally read-only. `drobo status` also reports whether the data volume is currently mounted.
 
-The installer uses the current release candidate while v0.1 is being validated on real hardware and verifies its SHA-256 checksum before installation.
-
 ## Building
 
 Requires Go.
@@ -76,23 +74,24 @@ sudo ./drobo status
 
 Use `--device /dev/sgX` if more than one supported Drobo is attached.
 
-## Prior art
+## Kudos
 
-The ESA protocol documentation and 5D validation work in [fetzu/ReDrobo](https://github.com/fetzu/ReDrobo) made this Linux implementation practical. ReDrobo is MIT licensed and documents the Drobo management channel in detail.
+The ESA protocol documentation and 5D validation work in [fetzu/ReDrobo](https://github.com/fetzu/ReDrobo) made this Linux implementation practical. ReDrobo is MIT licensed and documents the Drobo management channel in detail. Great stuff!
 
-## Icon credit
+Using the sweet icons made by Bjango: https://bjango.com/articles/droboicon/
 
-The intended application icon is Bjango's replacement Drobo icon:
 
-https://bjango.com/articles/droboicon/
+## Safety & Next Steps
 
-Bjango publicly described the icon as open source. The project uses it with attribution and a link back to the original source.
+droboctl v1 only issues read-side SCSI management requests. 
 
-## Safety
+In the future, it'll:
+- format disks
+- update firmware
+- modify the disk pack
+- resize volumes
 
-droboctl v1 only issues read-side SCSI management requests. It does not format disks, update firmware, modify the disk pack, resize volumes, or issue guessed write commands.
 
-Your Drobo is still old storage hardware. Keep backups outside the Drobo.
 
 ## License
 
