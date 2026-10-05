@@ -78,7 +78,7 @@ Use `--device /dev/sgX` if more than one supported Drobo is attached.
 
 The ESA protocol documentation and 5D validation work in [fetzu/ReDrobo](https://github.com/fetzu/ReDrobo) made this Linux implementation practical. ReDrobo is MIT licensed and documents the Drobo management channel in detail. Great stuff!
 
-Using the sweet icons made by Bjango: https://bjango.com/articles/droboicon/
+Thanks to Bjango for creating some sweet icons for use: https://bjango.com/articles/droboicon/
 
 
 ## Safety & Next Steps
