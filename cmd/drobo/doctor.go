@@ -11,6 +11,7 @@ import (
 func doctor(args []string) error {
 	fs := flag.NewFlagSet("doctor", flag.ContinueOnError)
 	explicit := fs.String("device", "", "SCSI generic device, e.g. /dev/sg3")
+	showSerials := fs.Bool("show-serials", false, "show full drive serial numbers")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -55,7 +56,7 @@ func doctor(args []string) error {
 		if s.Health() != "Good" || s.ErrorCount > 0 {
 			problems++
 			fmt.Printf("Bay %d: %s, errors=%d, model=%s, serial=%s\n",
-				int(s.ID)+1, s.Health(), s.ErrorCount, s.Model, s.Serial)
+				int(s.ID)+1, s.Health(), s.ErrorCount, s.Model, serialForDisplay(s.Serial, *showSerials))
 		}
 	}
 
@@ -66,4 +67,14 @@ func doctor(args []string) error {
 		fmt.Println("Do not remove a drive solely from this output. Confirm redundancy/rebuild state and keep an external backup before replacing hardware.")
 	}
 	return nil
+}
+
+func serialForDisplay(serial string, showFull bool) string {
+	if showFull || serial == "" {
+		return serial
+	}
+	if len(serial) <= 10 {
+		return "redacted"
+	}
+	return serial[:6] + "…" + serial[len(serial)-4:]
 }

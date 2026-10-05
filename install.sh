@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="ryngrn/droboctl"
-VERSION="${DROBO_VERSION:-v0.1.0-rc3}"
+VERSION="${DROBO_VERSION:-v0.1.0-rc4}"
 DEST="/usr/local/bin/drobo"
 RULE="/etc/udev/rules.d/99-droboctl.rules"
 TMP="$(mktemp -d)"
@@ -14,9 +14,14 @@ case "$(uname -m)" in
 esac
 
 url="https://github.com/$REPO/releases/download/$VERSION/$asset"
-curl -fL "$url" -o "$TMP/drobo"
-chmod +x "$TMP/drobo"
-sudo install -m 0755 "$TMP/drobo" "$DEST"
+curl -fL "$url" -o "$TMP/$asset"
+curl -fL "$url.sha256" -o "$TMP/$asset.sha256"
+(
+  cd "$TMP"
+  sha256sum -c "$asset.sha256"
+)
+chmod +x "$TMP/$asset"
+sudo install -m 0755 "$TMP/$asset" "$DEST"
 
 if command -v udevadm >/dev/null 2>&1; then
   if ! getent group drobo >/dev/null 2>&1; then
@@ -35,5 +40,6 @@ EOF
 fi
 
 echo "Installed drobo $VERSION to $DEST"
+echo "Verified release checksum before installation."
 echo "Drobo device access is granted through the 'drobo' group."
 echo "Log out and back in once, then run: drobo status"
